@@ -1,39 +1,58 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
 import Tarefa from '../../models/Tarefa'
 import * as enums from '../../utils/enums/tarefa'
 
+type TarefaState = {
+  itens: Tarefa[]
+}
+
+const initialState: TarefaState = {
+  itens: [
+    {
+      id: 1,
+      titulo: 'Estudar JS',
+      prioridade: enums.Prioridade.NORMAL,
+      status: enums.Status.PENDENTE,
+      descricao: 'rever módulo 7 do curso'
+    },
+    {
+      id: 2,
+      titulo: 'Estudar TS',
+      prioridade: enums.Prioridade.IMPORTANTE,
+      status: enums.Status.CONCLUIDA,
+      descricao: 'rever useState e useEffect'
+    },
+    {
+      id: 3,
+      titulo: 'Estudar Bootstrap',
+      prioridade: enums.Prioridade.URGENTE,
+      status: enums.Status.PENDENTE,
+      descricao: 'montar uma landing page com Bootstrap'
+    }
+  ]
+}
+
 const tarefasSlice = createSlice({
   name: 'tarefas',
-  initialState: [
-    new Tarefa(
-      'estudar JS',
-      enums.Prioridade.IMPORTANTE,
-      enums.Status.PENDENTE,
-      '',
-      1
-    ),
-    new Tarefa(
-      'estudar TS',
-      enums.Prioridade.URGENTE,
-      enums.Status.CONCLUIDA,
-      'Rever aula 2 do múdulo',
-      2
-    ),
-    new Tarefa(
-      'estudar React',
-      enums.Prioridade.NORMAL,
-      enums.Status.PENDENTE,
-      'Praticar useEffect',
-      3
-    )
-  ],
+  initialState,
   reducers: {
     remover: (state, action: PayloadAction<number>) => {
-      state = state.filter((tarefa) => tarefa.id !== action.payload)
+      state.itens = [
+        ...state.itens.filter((tarefa) => tarefa.id !== action.payload)
+      ]
+    },
+    editar: (state, action: PayloadAction<Tarefa>) => {
+      const indexTarefa = state.itens.findIndex(
+        (t) => t.id === action.payload.id
+      )
+      if (indexTarefa >= 0) {
+        state.itens[indexTarefa] = action.payload
+      }
     }
   }
 })
 
-export const { remover } = tarefasSlice.actions
+export const { remover, editar } = tarefasSlice.actions
 
 export default tarefasSlice.reducer
